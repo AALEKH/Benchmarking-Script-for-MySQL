@@ -3,9 +3,6 @@ import MySQLdb
 import memcache
 import timeit
 
-##INSERT INTO employees (emp_no, first_name, last_name, hire_date) "
-##  "VALUES (%s, %s, %s, %s)"
-
 def insert(para):
         i = 0
         while (i<10):
@@ -24,22 +21,22 @@ def memcache_get(see):
 memc = memcache.Client(['127.0.0.1:11211'], debug=1);
 try:
     conn = MySQLdb.connect (host = "localhost",
-                            user = "add user",
-                            passwd = "add password",
+                            user = "root",
+                            passwd = "",
                             db = "myalbum")
 except MySQLdb.Error, e:
      print "Error %d: %s" % (e.args[0], e.args[1])
      sys.exit (1)
-popularfilms = memc.get('1')
+popularfilms = memc.get('a1')
 if not popularfilms:
     cursor = conn.cursor()
     ##insert(conn)
     j = 0
     start_time = timeit.default_timer()
-    while (j<10):
-        cursor.execute('select album_id from album where album_id = %s', str(j))
+    while (j<10000):
+        cursor.execute('select album_id from album where album_id = {0}'.format(j))
         rows = cursor.fetchall()
-        memc.set(str(j),rows,3600)
+        memc.set('a'+str(j),rows,216000)
         j =j + 1
         print j
     elapsed = timeit.default_timer() - start_time
@@ -50,18 +47,18 @@ else:
     k = 0
     t = 0
     start_time = timeit.default_timer()
-    while (t<10):
-        cursor.execute('select album_id from album where album_id = %s', str(t))
+    while (t<10000):
+        cursor.execute('select album_id from album where album_id = {0}'.format(t))
         rows = cursor.fetchall()
         t = t + 1
-        #print rows
+        print t
     elapsed = timeit.default_timer() - start_time
     print "All sql complete:" + str(elapsed) + " sec"
     start_time = timeit.default_timer()
-    while (k < 10):
-        popularfilms = memc.get(str(k))
+    while (k < 10000):
+        popularfilms = memc.get('a'+str(k))
         k = k + 1
         #print popularfilms
     elapsed = timeit.default_timer() - start_time
     print "All memcached complete:" + str(elapsed) + " sec"
-   
+
