@@ -3,15 +3,6 @@ import MySQLdb
 import memcache
 import timeit
 
-def insert(para):
-        i = 0
-        while (i<10):
-                data = (i, 'Jane', 'Doe')
-                cursor = conn.cursor()
-                cursor.execute('INSERT INTO album (album_id, title, artist) VALUES (%s, %s, %s)', data)
-                i = i + 1
-                conn.commit()
-                print i
 
 def memcache_get(see):
         popularfilms = memc.get('top5films')
